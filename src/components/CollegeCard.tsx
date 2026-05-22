@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { addToCompare, removeFromCompare, isInCompare } from '@/lib/compare';
+import { showToast } from '@/components/Toast';
 
 interface College {
   id: string;
@@ -65,7 +66,7 @@ export default function CollegeCard({ college, initialSaved = false, onUnsave }:
           onUnsave(college.id);
         }
       } else if (res.status === 401) {
-        alert('Please sign in to bookmark colleges!');
+        showToast('Please sign in to bookmark colleges!', 'error');
       }
     } catch (err) {
       console.error('Failed to toggle bookmark:', err);
@@ -91,8 +92,9 @@ export default function CollegeCard({ college, initialSaved = false, onUnsave }:
       });
       if (result.success) {
         setIsCompared(true);
+        showToast(`Added ${college.name} to comparison!`, 'success');
       } else {
-        alert(result.message);
+        showToast(result.message, 'error');
       }
     }
   };

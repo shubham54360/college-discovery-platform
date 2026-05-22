@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { addToCompare, removeFromCompare, isInCompare } from '@/lib/compare';
 import Loader from '@/components/Loader';
+import { showToast } from '@/components/Toast';
 
 interface User {
   id: string;
@@ -155,8 +156,9 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ slug: 
       if (res.ok) {
         const data = await res.json();
         setIsSaved(data.saved);
+        showToast(data.saved ? 'Added to Bookmarks!' : 'Removed from Bookmarks!', 'success');
       } else if (res.status === 401) {
-        alert('Please sign in to bookmark colleges!');
+        showToast('Please sign in to bookmark colleges!', 'error');
         router.push('/login');
       }
     } catch (err) {
@@ -169,6 +171,7 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ slug: 
     if (isCompared) {
       removeFromCompare(college.id);
       setIsCompared(false);
+      showToast(`Removed ${college.name} from comparison!`, 'info');
     } else {
       const result = addToCompare({
         id: college.id,
@@ -181,8 +184,9 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ slug: 
       });
       if (result.success) {
         setIsCompared(true);
+        showToast(`Added ${college.name} to comparison!`, 'success');
       } else {
-        alert(result.message);
+        showToast(result.message, 'error');
       }
     }
   };

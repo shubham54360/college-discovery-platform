@@ -1,0 +1,18 @@
+{
+  "name": "UniFinder College Discovery Platform",
+  "short_name": "UniFinder",
+  "description": "Discover, compare, and bookmark top public and private US universities side-by-side.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#4f46e5",
+  "status_bar": "black-translucent",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CollegeCard from '@/components/CollegeCard';
 import Loader from '@/components/Loader';
+import SkeletonCard from '@/components/SkeletonCard';
 
 // Define structures
 interface College {
@@ -29,10 +30,22 @@ function CollegesDirectoryContent() {
   const searchParams = useSearchParams();
 
   // Search & Filter state
+  const [searchInput, setSearchInput] = useState(searchParams.get('search') || '');
   const [search, setSearch] = useState(searchParams.get('search') || '');
   const [state, setState] = useState(searchParams.get('state') || '');
   const [type, setType] = useState(searchParams.get('type') || 'All');
   const [sortBy, setSortBy] = useState('ranking');
+
+  // Debounce searchInput into search
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearch(searchInput);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchInput]);
 
   // Data state
   const [colleges, setColleges] = useState<College[]>([]);
@@ -88,6 +101,7 @@ function CollegesDirectoryContent() {
   }, [search, state, type, sortBy]);
 
   const handleClearFilters = () => {
+    setSearchInput('');
     setSearch('');
     setState('');
     setType('All');
@@ -128,8 +142,8 @@ function CollegesDirectoryContent() {
                 <input
                   type="text"
                   placeholder="Harvard, Biology, CA..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
                   className="w-full bg-transparent text-white text-sm focus:outline-none placeholder-slate-600"
                 />
               </div>
@@ -192,7 +206,11 @@ function CollegesDirectoryContent() {
         {/* Results Grid */}
         <div className="lg:col-span-3">
           {loading ? (
-            <Loader />
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
           ) : colleges.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
               {colleges.map((college) => (
